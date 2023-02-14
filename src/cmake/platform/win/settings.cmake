@@ -15,21 +15,14 @@
 # with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# check what platform we're on (64-bit or 32-bit), and create a simpler test than CMAKE_SIZEOF_VOID_P
-if(CMAKE_SIZEOF_VOID_P MATCHES 8)
-    set(PLATFORM 64)
-    MESSAGE(STATUS "Detected 64-bit platform")
-else()
-    set(PLATFORM 32)
-    MESSAGE(STATUS "Detected 32-bit platform")
+add_definitions(-D_WIN32_WINNT=0x0601)
+add_definitions(-DWIN32_LEAN_AND_MEAN)
+add_definitions(-DNOMINMAX)
+
+if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+  include(${CMAKE_SOURCE_DIR}/src/cmake/compiler/msvc/settings.cmake)
+elseif(CMAKE_CXX_PLATFORM_ID MATCHES "MinGW")
+  include(${CMAKE_SOURCE_DIR}/src/cmake/compiler/mingw/settings.cmake)
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  include(${CMAKE_SOURCE_DIR}/src/cmake/compiler/clang/settings.cmake)
 endif()
-
-include("${CMAKE_SOURCE_DIR}/src/cmake/platform/settings.cmake")
-
-if(WIN32)
-  include("${CMAKE_SOURCE_DIR}/src/cmake/platform/win/settings.cmake")
-elseif(UNIX)
-  include("${CMAKE_SOURCE_DIR}/src/cmake/platform/unix/settings.cmake")
-endif()
-
-include("${CMAKE_SOURCE_DIR}/src/cmake/platform/after_platform.cmake")
