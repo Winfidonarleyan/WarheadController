@@ -1,0 +1,30 @@
+name: build
+on:
+  push:
+    branches:
+      - 'main'  # only default branch
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Configure OS
+        run: |
+          sudo apt-get install -y clang-14
+      - name: Cmake configure
+        run: |
+          mkdir build
+          cd build
+          cmake ../ -DWITH_WARNINGS=1 -DCMAKE_C_FLAGS="-Werror" -DCMAKE_CXX_FLAGS="-Werror" -DCMAKE_INSTALL_PREFIX=check_install -DCMAKE_C_COMPILER=clang-14 -DCMAKE_CXX_COMPILER=clang++-14
+          cd ..
+      - name: Build
+        run: |
+          cd build
+          make -j 4 && make install
+          cd ..
+      - name: Run unit tests
+        run: |
+          cd build
+          ctest --test-dir ./src/tests/
