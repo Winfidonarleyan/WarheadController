@@ -43,9 +43,6 @@ target_include_directories(WarheadController
   PUBLIC
     ${PUBLIC_INCLUDES})
 
-# Install config
-CopyApplicationConfig(${CMAKE_CURRENT_SOURCE_DIR} WarheadController)
-
 if (UNIX)
   install(TARGETS WarheadController DESTINATION bin)
 elseif (WIN32)

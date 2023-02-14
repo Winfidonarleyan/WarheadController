@@ -61,7 +61,6 @@ include(ConfigureBaseTargets)
 include(CheckPlatform)
 include(GroupSources)
 include(AutoCollect)
-include(ConfigInstall)
 
 # print out the results before continuing
 include(src/cmake/showoptions.cmake)

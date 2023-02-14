@@ -21,14 +21,7 @@
 #include "Elevator.h"
 #include "Log.h"
 #include <csignal>
-#include <filesystem>
 #include <thread>
-
-#ifndef _WARHEAD_CONTROLLER_CONFIG
-#define _WARHEAD_CONTROLLER_CONFIG "WarheadController.conf"
-#endif
-
-namespace fs = std::filesystem;
 
 void TerminateHandler(int sigval);
 void ElevatorUpdateLoop();
@@ -40,25 +33,16 @@ int main()
     signal(SIGINT, &TerminateHandler);
     signal(SIGABRT, &Warhead::AbortHandler);
 
-    auto configFile = fs::path(sConfigMgr->GetConfigPath() + std::string(_WARHEAD_CONTROLLER_CONFIG));
+    // Use only console logger
+    sLog->UsingDefaultLogs();
 
-    // Add file and args in config
-    sConfigMgr->Configure(configFile.generic_string());
-    if (!sConfigMgr->LoadAppConfigs())
-        return 1;
-
-    // Init logging
-    sLog->Initialize();
-
-    LOG_INFO("watcher", "> Using configuration file:       {}", sConfigMgr->GetFilename());
-    LOG_INFO("watcher", "> Using logs directory:           {}", sLog->GetLogsDir());
-    LOG_INFO("watcher", "");
-
+    // Configure elevator
     sElevator->Start();
 
+    // Start main loop
     ElevatorUpdateLoop();
 
-    LOG_INFO("server", "Halting process...");
+    LOG_INFO("elevator", "Halting process...");
 
     // 0 - normal shutdown
     // 1 - shutdown at error
@@ -85,11 +69,11 @@ void ElevatorUpdateLoop()
         realPrevTime = realCurrTime;
     }
 
-    LOG_INFO("watcher", "Stop update loop");
+    LOG_INFO("elevator", "Stop update loop");
 }
 
 void TerminateHandler(int sigval)
 {
-    LOG_WARN("watcher", "Caught signal: {}. Stop process", sigval);
+    LOG_WARN("elevator", "Caught signal: {}. Stop process", sigval);
     sElevator->StopNow(SHUTDOWN_EXIT_CODE);
 }
