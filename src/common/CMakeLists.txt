@@ -51,7 +51,6 @@ target_link_libraries(common
   PRIVATE
     warhead-core-interface
   PUBLIC
-    boost
     utf8cpp
     threads
     fmt)

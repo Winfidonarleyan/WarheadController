@@ -13,7 +13,6 @@
 # This is done EACH compile so they can be alerted about the consequences.
 #
 
-add_subdirectory(boost)
 add_subdirectory(fmt)
 add_subdirectory(threads)
 add_subdirectory(utf8cpp)
